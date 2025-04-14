@@ -178,6 +178,46 @@ async def get_popular_knowledge(
 
     return result
 
+@router.get("/")
+async def get_knowledge_list(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    keyword: Optional[str] = None,
+    limit: int = 20,
+    offset: int = 0
+):
+    query = db.query(Knowledge)
+
+    # タイトルでの部分一致検索
+    if keyword:
+        query = query.filter(Knowledge.title.like(f"%{keyword}%"))
+
+    knowledges = (
+        query.order_by(Knowledge.created_at.desc())
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
+
+    result = []
+    for k in knowledges:
+        result.append({
+            "id": k.id,
+            "title": k.title,
+            "category": k.category,
+            "method": k.method,
+            "target": k.target,
+            "views": k.views,
+            "createdAt": k.created_at.strftime("%Y年%m月%d日"),
+            "author": {
+                "id": k.author.id,
+                "name": k.author.username,
+                "avatarUrl": k.author.avatar_url
+            }
+        })
+
+    return result
+
 @router.get("/{knowledge_id}")
 async def get_knowledge_detail(
     knowledge_id: int,
@@ -230,47 +270,6 @@ async def get_knowledge_detail(
         },
         "comments": comments
     }
-
-
-@router.get("/")
-async def get_knowledge_list(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-    keyword: Optional[str] = None,
-    limit: int = 20,
-    offset: int = 0
-):
-    query = db.query(Knowledge)
-
-    # タイトルでの部分一致検索
-    if keyword:
-        query = query.filter(Knowledge.title.like(f"%{keyword}%"))
-
-    knowledges = (
-        query.order_by(Knowledge.created_at.desc())
-        .offset(offset)
-        .limit(limit)
-        .all()
-    )
-
-    result = []
-    for k in knowledges:
-        result.append({
-            "id": k.id,
-            "title": k.title,
-            "category": k.category,
-            "method": k.method,
-            "target": k.target,
-            "views": k.views,
-            "createdAt": k.created_at.strftime("%Y年%m月%d日"),
-            "author": {
-                "id": k.author.id,
-                "name": k.author.username,
-                "avatarUrl": k.author.avatar_url
-            }
-        })
-
-    return result
 
 @router.put("/{knowledge_id}")
 async def update_knowledge(
