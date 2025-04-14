@@ -22,6 +22,7 @@ class User(Base):
     avatar_data = Column(LargeBinary, nullable=True)
     avatar_content_type = Column(String(50), nullable=True)  # 画像のMIMEタイプを保存
     department = Column(String(100), nullable=True)
+    avatar_url = Column(String(255), nullable=True)  # 画像のURLを保存
 
     # リレーションシップ
     knowledges = relationship("Knowledge", back_populates="author")
@@ -30,14 +31,14 @@ class User(Base):
     collaborations = relationship("KnowledgeCollaborator", back_populates="user")
     profile = relationship("Profile", back_populates="user", uselist=False) 
 
-    @property
-    def avatar_url(self) -> str | None:
-        """
-        ユーザーのアバター画像のURLを返す
-        画像が設定されていない場合はNoneを返す
-        """
-        if self.avatar_data is None:
-            return None
-        return f"/profile/{self.id}/avatar"
+    # @property
+    # def avatar_url(self) -> str | None:
+    #     """
+    #     ユーザーのアバター画像のURLを返す
+    #     画像が設定されていない場合はNoneを返す
+    #     """
+    #     if self.avatar_data is None:
+    #         return None
+    #     return f"/profile/{self.id}/avatar"
 
 

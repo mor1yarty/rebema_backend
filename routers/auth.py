@@ -99,6 +99,6 @@ async def get_profile(
         "department": current_user.department,
         "level": current_user.level,
         "currentXp": current_user.current_xp,
-        "avatar": current_user.avatar_data,
+        "avatar": current_user.avatar_url,
         "activity": activities
     }
