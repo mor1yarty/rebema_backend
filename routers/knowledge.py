@@ -176,10 +176,7 @@ async def get_popular_knowledge(
             }
         })
 
-    return {
-        "total": len(result),
-        "items": result
-    }
+    return result
 
 @router.get("/{knowledge_id}")
 async def get_knowledge_detail(
