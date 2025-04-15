@@ -193,7 +193,7 @@ async def get_knowledge_list(
         query = query.filter(Knowledge.title.like(f"%{keyword}%"))
 
     knowledges = (
-        query.order_by(Knowledge.created_at.desc())
+        query.order_by(Knowledge.views.desc())
         .offset(offset)
         .limit(limit)
         .all()
